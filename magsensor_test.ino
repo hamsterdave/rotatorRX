@@ -23,7 +23,6 @@ volatile int motorTimer;
 volatile uint8_t headingTX;
 volatile uint8_t positionRX;
 volatile int positionDisplay;
-volatile uint8_t positionDifference;
 
 volatile bool headingChange;
 volatile bool motorStateChange;
@@ -40,7 +39,6 @@ void setup(void)
   positionRX = 0;
   positionDisplay = 0;
   motorStatus = 0;
-  positionDifference = 0;
   motorTimer = 0;
   headingChange = FALSE;
   motorStateChange = FALSE;
@@ -127,6 +125,7 @@ void positionReceive() {
 
 
 void directionControl() {
+	static uint8_t positionDifference = 0;
   positionDifference = headingTX - positionRX;
   if (positionDifference != 0){
   
