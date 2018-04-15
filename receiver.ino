@@ -24,8 +24,8 @@ volatile int motorTimer;
 
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);  //Assign ID to compass sensor
 
-
-
+void pollCompass();
+void headingSend();
 
 void setup () {
   Serial.begin(9600);
