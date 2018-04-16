@@ -142,16 +142,21 @@ void doEncoderPress (){
 void lcdUpdate() {
 
   lcd.clear();
-  char n[4]; // string to store the formatted number
-  lcd.setCursor(5, 1); 
-  if (buttonPrev != buttonCount){
-      lcd.print("X");
-  }
+
+   
   if (buttonPrev == buttonCount){
-    lcd.print(" ");
+      lcd.setCursor(4, 1);
+      lcd.print("*");
+      lcd.setCursor(6, 1);
   }
+  else {
+    lcd.setCursor(6, 1);
+    
+  }
+  
+  char n[4]; // string to store the formatted number
   sprintf(n, "%03d", encoder0Pos); // print the value of x formatted as a 3-character zero-padded decimal integer to the string "n"
-  lcd.print(n); // print the string "n" to the lcd
+  lcd.print(n); // print the string "n" to the lcd 
   encoder0Prev = encoder0Pos;
 
   
@@ -161,11 +166,6 @@ void lcdUpdate() {
   }
 
    else {
-   /*  if (buttonPrev != buttonCount){
-      
-      lcd.setCursor(0, 1);
-      lcd.print("X");
-    } */
     char c[4];
     lcd.setCursor(6, 0);
     sprintf(c, "%03d", compassDisplay);
@@ -204,9 +204,7 @@ void loop() {
     if (compassDisplay != 500) {          
         headingTransmit();                  
       }
-      else {
-        lcdUpdate();
-      }
+     
   }
 
 
