@@ -14,26 +14,22 @@ LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
 volatile int encoder0Pos = 0;
 volatile int encoder0Prev = 0;
-volatile int buttonCount = 0;
-volatile int buttonPrev = 0;
+volatile int buttonPress = 0;
 volatile int bounceTime = 0;
 volatile int bouncePrev = 0;
 
 int headingTX = 0;
+int lastHeadingSent;
 int compassDisplay;
 int compassRX;
 int compassPrev;
 
 
-int headingSet = 270;     //Are these being used?
-int headingPrev = 0;
-
-
-
 void setup() {
 
-  compassDisplay = 500;
+  compassDisplay = 270;     //TEST SETTING: CHANGE BACK TO 500
   encoder0Pos = 270;
+  lastHeadingSent = 270;
 
   Serial.begin(9600);
   
@@ -134,31 +130,23 @@ void doEncoderPress (){
   bounceTime = millis();
     if (bounceTime - bouncePrev > 50) { 
       bouncePrev = bounceTime;
-      buttonCount ++;   
+      buttonPress = 1;   
     }
- 
 }
 
 void lcdUpdate() {
 
-  lcd.clear();
-
-   
-  if (buttonPrev == buttonCount){
+  lcd.clear();  
+  if (lastHeadingSent != encoder0Pos){
       lcd.setCursor(4, 1);
-      lcd.print("*");
-      lcd.setCursor(6, 1);
-  }
-  else {
-    lcd.setCursor(6, 1);
-    
+      lcd.print("*");       
   }
   
+  lcd.setCursor(6, 1); 
   char n[4]; // string to store the formatted number
   sprintf(n, "%03d", encoder0Pos); // print the value of x formatted as a 3-character zero-padded decimal integer to the string "n"
   lcd.print(n); // print the string "n" to the lcd 
   encoder0Prev = encoder0Pos;
-
   
   if (compassDisplay == 500){
     lcd.setCursor(4, 0);
@@ -170,10 +158,8 @@ void lcdUpdate() {
     lcd.setCursor(6, 0);
     sprintf(c, "%03d", compassDisplay);
     lcd.print(c);  
+  } 
   }
-  
-}
-
 
 
 void headingTransmit() {
@@ -182,7 +168,8 @@ void headingTransmit() {
    digitalWrite(flowControl, HIGH);
    Serial.write(headingTX);
    digitalWrite(flowControl, LOW);
-   buttonPrev = buttonCount;
+   buttonPress = 0;
+   lastHeadingSent = encoder0Pos;
    lcdUpdate();
 }
 
@@ -200,12 +187,10 @@ void loop() {
     lcdUpdate();
   }
 
-  if (buttonPrev != buttonCount) {
+  if (buttonPress == 1) {
     if (compassDisplay != 500) {          
         headingTransmit();                  
-      }
-     
+    }     
   }
-
 
 }
